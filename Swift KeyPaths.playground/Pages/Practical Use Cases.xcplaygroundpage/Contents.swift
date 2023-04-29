@@ -13,7 +13,11 @@ struct Product {
     let retail: Double
     
     // Static total function using KeyPaths
-
+    static func total(of products: [Product], for keyPath: KeyPath<Product, Double>) -> Double {
+        return products.reduce(0) { partialResult, product in
+            partialResult + product[keyPath: keyPath]
+        }
+    }
 }
 
 let products = [
@@ -23,11 +27,16 @@ let products = [
 ]
 
 code(for: "1. Wholesale Total") {
-
+//    let wholesaleTotal = products.reduce(0) { partialResult, product in
+//        partialResult + product[keyPath: \.wholesale]
+//    }
+    let wholesaleTotal = Product.total(of: products, for: \.wholesale)
+    print(wholesaleTotal)
 }
 
 code(for: "2. Retail Total") {
-
+    let retailTotal = Product.total(of: products, for: \.retail)
+    print(retailTotal)
 }
 /*:
  - Callout(Reset):Using a generic static function to reset all values in an array
@@ -39,7 +48,11 @@ struct Player {
     var isPlaying: Bool
     
     // A generic static reset function to reset score to 0 and isPlaying to false for all players in an array
-
+    static func reset<T>(players: inout [Player], keyPath: WritableKeyPath<Player, T>, newValue: T) {
+        for index in players.indices {
+            players[index][keyPath: keyPath] = newValue
+        }
+    }
 }
 
 var players = [
@@ -50,7 +63,11 @@ var players = [
 ]
 
 code(for: "Reset scores and is Playing") {
-
+    Player.reset(players: &players, keyPath: \.score, newValue: 0)
+    Player.reset(players: &players, keyPath: \.isPlaying, newValue: false)
+    for player in players {
+        print(player.name, player.score, player.isPlaying)
+    }
 }
 /*:
  [< Previous](@previous)                    [Home](Introduction)                    [Next >](@next)

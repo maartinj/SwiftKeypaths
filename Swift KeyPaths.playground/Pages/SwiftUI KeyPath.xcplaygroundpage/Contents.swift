@@ -30,7 +30,14 @@ let products = [
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello World")
+        List(products, id: \.name) { product in
+            HStack {
+                Text(product.name)
+                Text(product.retail, format: .currency(code: "USD"))
+                Text(product.wholesale, format: .currency(code: "USD"))
+            }
+            Text("Total Retail \(Product.total(of: products, for: \.retail), format: .currency(code: "USD"))")
+        }
     }
 }
 
